@@ -3,6 +3,7 @@ const app=express();
 const {User,Comment,Like,Blog}=require("../db/index");
 const router=express.Router();
 const bcrypt=require("bcrypt");
+const authenticate=require("../middlewares/authenticate");
 
 
 router.post('/signup',async(req,res)=>{
@@ -14,13 +15,17 @@ router.post('/signup',async(req,res)=>{
     if(!UserExists){
         try{
             const hashedPassword=await bcrypt.hash(password,10);
-
+            
             await User.create({
                 username,
                 password:hashedPassword,
                 name:req.body.name,
                 email:req.body.email
             })
+            req.session.user={
+                id:UserExists._id,
+                role:'normal',
+            }
 
             res.status(201).json({
                 message:"profile created successfully"
@@ -39,7 +44,12 @@ router.post('/signup',async(req,res)=>{
 });
 
 router.post('/login',async(req,res)=>{
-    const {username,password}=res.body;
+    if(req.session.user){
+        return res.status(403).json({
+            error:'User is already loggedIn',
+        })
+    }
+    const {username,password}=req.body;
 
     const UserExists=await User.findOne({username});
 
@@ -48,6 +58,7 @@ router.post('/login',async(req,res)=>{
         if(PasswordMatch){
             res.status(200).json({
                 message:'LoggedIn Succesfully',
+                user:req.session.user,
                 data:UserExists,
             })
         }
@@ -64,7 +75,8 @@ router.post('/login',async(req,res)=>{
     }
 });
 
-router.get('/logout',async(req,res)=>{
+router.get('/logout',authenticate,async(req,res)=>{
+    req.session.destroy();
     res.status(500).json({
         message:'Logout Succesful',
     })
