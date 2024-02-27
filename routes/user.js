@@ -1,4 +1,4 @@
-const express=required("express");
+const express=require("express");
 const app=express();
 const {User,Comment,Like,Blog}=require("../db/index");
 const router=express.Router();
@@ -69,5 +69,7 @@ router.get('/logout',async(req,res)=>{
         message:'Logout Succesful',
     })
 })
+
+module.exports=router;
 
 

@@ -16,28 +16,28 @@ const userSchema=new mongoose.Schema({
     password:{type:String,required:true},
     name:{type:String,required:true},
     email:{type:String,required:true,unique:true},
-    authoredblogs:[{type:mongoose.Schema.Types.Objectid,ref:'Blog'}],
+    authoredBlogs:[{type:mongoose.Schema.Types.ObjectId,ref:'Blog'}],
 });
 
 const commentSchema=new mongoose.Schema({
-    user:{type:mongoose.Schema.Types.Objectid,ref:'User'},
+    user:{type:mongoose.Schema.Types.ObjectId,ref:'User'},
     text:{type:String,required:true},
     createdAt:{type:Date,default:Date.now},
 })
 
 const likeSchema=new mongoose.Schema({
-    user:{type:mongoose.Schema.Types.Objectid,ref:'User'},
+    user:{type:mongoose.Schema.Types.ObjectId,ref:'User'},
     createdAt:{type:Date,default:Date.now},
 })
 
 const blogSchema=new mongoose.Schema({
     title:String,
     content:String,
-    author:{type:mongoose.Schema.Types.Objectid,ref:'User'},
+    author:{type:mongoose.Schema.Types.ObjectId,ref:'User'},
     createdAt:{type:Date,default:Date.now},
     updatedAt:Date,
-    comments:[{type:mongoose.Schema.Types.Objectid,ref:'Comment'}],
-    likes:[{type:mongoose.Schema.Types.Objectid,ref:'Like'}]
+    comments:[{type:mongoose.Schema.Types.ObjectId,ref:'Comment'}],
+    likes:[{type:mongoose.Schema.Types.ObjectId,ref:'Like'}]
 });
 
 
