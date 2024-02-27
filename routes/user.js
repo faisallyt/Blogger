@@ -64,4 +64,10 @@ router.post('/login',async(req,res)=>{
     }
 });
 
+router.get('/logout',async(req,res)=>{
+    res.status(500).json({
+        message:'Logout Succesful',
+    })
+})
+
 
