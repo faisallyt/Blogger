@@ -16,19 +16,20 @@ router.post('/signup',async(req,res)=>{
         try{
             const hashedPassword=await bcrypt.hash(password,10);
             
-            await User.create({
+            const newUser=await User.create({
                 username,
                 password:hashedPassword,
                 name:req.body.name,
                 email:req.body.email
             })
             req.session.user={
-                id:UserExists._id,
+                id:newUser._id,
                 role:'normal',
             }
 
             res.status(201).json({
-                message:"profile created successfully"
+                message:"profile created successfully",
+                data:newUser,
             })
         }
         catch(error){
@@ -103,8 +104,9 @@ router.post('/create-blog',authenticate,async(req,res)=>{
             content,
             author:userId,
         });
-        user.authoredBlogs.push(newBlog._id);
+        
         await newBlog.save();
+        await user.authoredBlogs.push(newBlog._id);
       
         res.status(201).json({
             message:'Blog created Succesfully',
