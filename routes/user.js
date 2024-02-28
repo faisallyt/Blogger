@@ -33,7 +33,7 @@ router.post('/signup',async(req,res)=>{
         }
         catch(error){
             res.status(500).json({
-                error:errer.message,
+                error:error.message,
             })
         }
     }else{
@@ -56,6 +56,11 @@ router.post('/login',async(req,res)=>{
     if(UserExists){
         const PasswordMatch=await bcrypt.compare(password,UserExists.password);
         if(PasswordMatch){
+
+            req.session.user={
+                id:UserExists._id,
+                role:'normal',
+            }
             res.status(200).json({
                 message:'LoggedIn Succesfully',
                 user:req.session.user,
@@ -81,6 +86,35 @@ router.get('/logout',authenticate,async(req,res)=>{
         message:'Logout Succesful',
     })
 })
+
+router.post('/create-blog',authenticate,async(req,res)=>{
+    try{
+        const{title,content}=req.body;
+        const userId=req.session.user.id;
+
+        const user=await User.findOne({_id:userId});
+
+        if(!user){
+            return res.status(404).json({error:'User not Found'});
+        }
+
+        const newBlog=new Blog({
+            title,
+            content,
+            author:userId,
+        });
+        user.authoredBlogs.push(newBlog._id);
+        await newBlog.save();
+      
+        res.status(201).json({
+            message:'Blog created Succesfully',
+            data:newBlog,
+        });
+    }catch(error){
+        console.error(error);
+        res.status(500).json({error:'Internal Server Error'});
+    }
+});
 
 module.exports=router;
 

@@ -1,6 +1,6 @@
 
 function authenticate(req,res,next){
-    if(req.session.id ){
+    if(req.session.user ){
         next();
     }
     else{
