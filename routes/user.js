@@ -108,6 +108,8 @@ router.post('/create-blog',authenticate,async(req,res)=>{
         await newBlog.save();
         await user.authoredBlogs.push(newBlog._id);
       
+        await user.save();
+        
         res.status(201).json({
             message:'Blog created Succesfully',
             data:newBlog,
