@@ -109,7 +109,7 @@ router.post('/create-blog',authenticate,async(req,res)=>{
         await user.authoredBlogs.push(newBlog._id);
       
         await user.save();
-        
+
         res.status(201).json({
             message:'Blog created Succesfully',
             data:newBlog,
@@ -119,6 +119,41 @@ router.post('/create-blog',authenticate,async(req,res)=>{
         res.status(500).json({error:'Internal Server Error'});
     }
 });
+
+router.get('/dashboard',authenticate,async(req,res)=>{
+    try{
+        const user= await User.findOne({_id:req.session.user.id});
+        res.status(200).json({
+            data:user
+        })
+    }
+    catch(error){
+        res.status(403).json({
+            error:error,
+        })
+    }
+})
+
+router.get('/blog/:blogId',async(req,res)=>{
+    try{
+        const blog=await Blog.findOne({_id:req.params.blogId});
+        if(!blog){
+            res.status(404).json({
+                error:'Blog Not Found',
+            })
+        }
+        else{
+            res.status(200).json({
+                blog:blog,
+            })
+        }
+    }
+    catch(error){
+        res.status(403).json({
+            error:error,
+        })
+    }
+})
 
 module.exports=router;
 
